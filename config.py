@@ -20,4 +20,4 @@ channelFilePath = ""
 #配置信息示例参看https://github.com/Meituan-Dianping/walle/blob/master/app/config.json
 extraChannelFilePath = ""
 #Android SDK buidtools path , please use above 25.0+
-sdkBuildToolPath = "/Users/mac/Library/Android/sdk/build-tools/26.0.2"
+sdkBuildToolPath = "/Users/mac/Library/Android/sdk/build-tools/28.0.3"

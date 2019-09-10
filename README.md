@@ -1,4 +1,37 @@
+
+# 我做了一些修改
+
+- 修改前：只支持一个base包，并写死了base apk名称；
+- 修改后：支持多个base包，动态读取根目录下的apk文件，遍历这些base apk，读取对应名称的channel文件，生成多渠道包。
+
+## 如何使用
+
+1. 前提：Python环境
+2. 下载我修改后的ProtectedApkResignerForWalle
+3. 用文件编辑器打开config.py文件，看注释，配置参数：keystone相关、
+4. 拷贝加固包到ProtectedApkResignerForWalle根目录下
+5. channel文件要跟apk文件一一对应，看下表
+6. 编辑channel文件，设定各个base apk要打的渠道，保存
+7. 双击ApkResigner.py运行，等待完成，最终的渠道包输出在channels文件夹下，
+
+如果双击ApkResigner.py无效，是因为找不到相关的IDE来打开运行，可以在终端下进入ProtectedApkResignerForWalle目录，运行python ApkResigner.py
+
+| apk文件                 | channel文件                  |
+| ----------------------- | ---------------------------- |
+| app-release_enc.apk     | channel_app-release_enc.txt  |
+| app-release_legu.apk    | channel_app-release_legu.txt |
+| 有其他的apk也可以加进来 | 格式：channel_\[apk name\].txt |
+
+
+
+以下是原作者的Wiki
+
+----------
+
+
+
 # ProtectedApkResignerForWalle
+
 一步解决应用加固导致[Walle](https://github.com/Meituan-Dianping/walle)渠道信息失效的自动化脚本，自动生成渠道包
 
 ----------
@@ -35,23 +68,7 @@
 # 问题讨论
 [讨论传送门>>>](https://github.com/Meituan-Dianping/walle/wiki/360%E5%8A%A0%E5%9B%BA%E5%A4%B1%E6%95%88%EF%BC%9F)
 
-
 ----------
-
-## 联系我
-
-- Email： 1015121748@qq.com
-- QQ Group: 573830030 有时候工作很忙没空看邮件和Issue,大家可以通过QQ群联系我
-<div style="text-align: center;">
-<img src="https://github.com/Jay-Goo/RangeSeekBar/blob/master/Gif/qq.png" style="margin: 0 auto;" height="250px"/>
-</div>
-
-## 一杯咖啡
-
-大家都知道开源是件很辛苦的事情，这个项目也是我工作之余完成的，平时工作很忙，但大家提的需求基本上我都尽量满足，如果这个项目帮助你节省了大量时间，你很喜欢，你可以给我一杯咖啡的鼓励，不在于钱多钱少，关键是你的这份鼓励所带给我的力量~
-<div style="text-align: center;">
-<img src="https://github.com/Jay-Goo/RangeSeekBar/blob/master/Gif/pay.png" height="200px"/>
-</div>
 
 # 感谢
 [支持Android7.0 Signature V2 Scheme 多渠道打包，并解决类似360加固后获取不到渠道信息 - 渠道统计失败的问题](%E6%94%AF%E6%8C%81Android7.0%20Signature%20V2%20Scheme%20%E5%A4%9A%E6%B8%A0%E9%81%93%E6%89%93%E5%8C%85%EF%BC%8C%E5%B9%B6%E8%A7%A3%E5%86%B3%E7%B1%BB%E4%BC%BC360%E5%8A%A0%E5%9B%BA%E5%90%8E%E8%8E%B7%E5%8F%96%E4%B8%8D%E5%88%B0%E6%B8%A0%E9%81%93%E4%BF%A1%E6%81%AF%20-%20%E6%B8%A0%E9%81%93%E7%BB%9F%E8%AE%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E9%97%AE%E9%A2%98)

@@ -43,35 +43,66 @@ def getBackslash():
 	else:
 		return "/"
 
+# 重置Channels输出文件夹
+def resetChannelsDir():
+  try:
+    if os.path.isdir(channelsOutputFilePath):
+      # 清空渠道信息
+      shutil.rmtree(channelsOutputFilePath)
+    # 创建Channels输出文件夹
+    os.makedirs(channelsOutputFilePath)
+    pass
+  except Exception:
+    pass
 
-# 清空临时资源
-def cleanTempResource():
+#遍历当前目录下的apk文件
+def getApkFiles(dirname, ext='.apk'):
+    """获取目录下所有特定后缀的文件
+    @param dirname: str 目录的完整路径
+    @param ext: str 后缀名, 以点号开头
+    @return: list(str) 所有子文件名(不包含路径)组成的列表
+    """
+    return list(filter(
+      lambda filename: os.path.splitext(filename)[1] == ext,
+      os.listdir(dirname)))
+
+# 生产渠道包
+def generateChannelApks(apkFilePath, channelFilePath):
+  print ("**** apkFilePath:" + apkFilePath + " ****")
+  print ("**** channelFilePath:" + channelFilePath + " ****")
+  zipalignedApkPath = apkFilePath[0 : -4] + "_aligned.apk"
+  signedApkPath = zipalignedApkPath[0 : -4] + "_signed.apk"
+  
+  #对齐
+  zipalignShell = buildToolsPath + "zipalign -v 4 " + apkFilePath + " " + zipalignedApkPath
+  os.system(zipalignShell)
+  
+  #签名
+  signShell = buildToolsPath + "apksigner sign --ks "+ keystorePath + " --ks-key-alias " + keyAlias + " --ks-pass pass:" + keystorePassword + " --key-pass pass:" + keyPassword + " --out " + signedApkPath + " " + zipalignedApkPath
+  os.system(signShell)
+  print(signShell)
+  
+  #检查V2签名是否正确
+  checkV2Shell = "java -jar " + checkAndroidV2SignaturePath + " " + signedApkPath
+  os.system(checkV2Shell)
+  
+  #写入渠道
+  if len(config.extraChannelFilePath) > 0:
+    writeChannelShell = "java -jar " + walleChannelWritterPath + " batch2 -f " + config.extraChannelFilePath + " " + signedApkPath + " " + channelsOutputFilePath
+  else:
+    writeChannelShell = "java -jar " + walleChannelWritterPath + " batch -f " + channelFilePath + " " + signedApkPath + " " + channelsOutputFilePath
+  
+  os.system(writeChannelShell)
+  
   try:
     os.remove(zipalignedApkPath)
     os.remove(signedApkPath)
-    pass
-  except Exception:
-    pass
- 
- # 清空渠道信息
-def cleanChannelsFiles():
-  try:
-    os.makedirs(channelsOutputFilePath)
-    pass
-  except Exception:
-    pass
+  finally:
+    return
 
-# 创建Channels输出文件夹
-def createChannelsDir():
-  try:
-    os.makedirs(channelsOutputFilePath)
-    pass
-  except Exception:
-    pass
-
-    
 #当前脚本文件所在目录
-parentPath = curFileDir() + getBackslash()
+parentDir = curFileDir()
+parentPath = parentDir + getBackslash()
 
 #config
 libPath = parentPath + "lib" + getBackslash()
@@ -83,9 +114,8 @@ keyAlias = config.keyAlias
 keystorePassword = config.keystorePassword
 keyPassword = config.keyPassword
 channelsOutputFilePath = parentPath + "channels"
-channelFilePath = parentPath +"channel"
+channelFilePath = parentPath +"channel.txt"
 protectedSourceApkPath = parentPath + config.protectedSourceApkName
-
 
 # 检查自定义路径，并作替换
 if len(config.protectedSourceApkDirPath) > 0:
@@ -97,43 +127,27 @@ if len(config.channelsOutputFilePath) > 0:
 if len(config.channelFilePath) > 0:
   channelFilePath = config.channelFilePath
 
-
-zipalignedApkPath = protectedSourceApkPath[0 : -4] + "_aligned.apk"
-signedApkPath = zipalignedApkPath[0 : -4] + "_signed.apk"
-
 # 创建Channels输出文件夹
-createChannelsDir()
+resetChannelsDir()
 
-#清空Channels输出文件夹
-cleanChannelsFiles()
+print ("\n**** =============================TASK BEGIN=================================== ****\n")
+print ("\n↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓   zipalign -->  apksigner -->  writeChannelShell   ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓\n")
+print ("\n**** =============================TASK BEGIN=================================== ****\n")
 
-
-#对齐
-zipalignShell = buildToolsPath + "zipalign -v 4 " + protectedSourceApkPath + " " + zipalignedApkPath
-os.system(zipalignShell)
-
-#签名
-signShell = buildToolsPath + "apksigner sign --ks "+ keystorePath + " --ks-key-alias " + keyAlias + " --ks-pass pass:" + keystorePassword + " --key-pass pass:" + keyPassword + " --out " + signedApkPath + " " + zipalignedApkPath
-os.system(signShell)
-print(signShell)
-
-#检查V2签名是否正确
-checkV2Shell = "java -jar " + checkAndroidV2SignaturePath + " " + signedApkPath;
-os.system(checkV2Shell)
-
-#写入渠道
-if len(config.extraChannelFilePath) > 0:
-  writeChannelShell = "java -jar " + walleChannelWritterPath + " batch2 -f " + config.extraChannelFilePath + " " + signedApkPath + " " + channelsOutputFilePath
+apkFiles = getApkFiles(parentPath)
+if len(apkFiles) > 0:
+  for apkFile in apkFiles:
+    # 获取apkFile对应的channel文件:channel_[apkName].txt
+    channelFile = parentPath + "channel_" + apkFile.replace('apk','txt')
+    if os.path.isfile(channelFile):
+      channelFilePath = channelFile
+    # 渠道信息存在，批量打包对应的渠道
+    generateChannelApks(parentPath + apkFile, channelFilePath)
 else:
-  writeChannelShell = "java -jar " + walleChannelWritterPath + " batch -f " + channelFilePath + " " + signedApkPath + " " + channelsOutputFilePath
-
-os.system(writeChannelShell)
-
-cleanTempResource()
+  # 默认配置
+  generateChannelApks(protectedSourceApkPath, channelFilePath)
 
 print ("\n**** =============================TASK FINISHED=================================== ****\n")
 print ("\n↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓   Please check channels in the path   ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓\n")
 print ("\n"+channelsOutputFilePath+"\n")
 print ("\n**** =============================TASK FINISHED=================================== ****\n")
-
-
