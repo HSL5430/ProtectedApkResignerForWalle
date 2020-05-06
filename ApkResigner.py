@@ -100,13 +100,19 @@ def generateChannelApks(apkFilePath, channelFilePath):
   finally:
     return
 
+def getBuildToolsPath():
+  if len(sys.argv) > 1:
+    return sys.argv[1]
+  else:
+    return config.sdkBuildToolPath
+
 #当前脚本文件所在目录
 parentDir = curFileDir()
 parentPath = parentDir + getBackslash()
 
 #config
 libPath = parentPath + "lib" + getBackslash()
-buildToolsPath =  config.sdkBuildToolPath + getBackslash()
+buildToolsPath =  getBuildToolsPath() + getBackslash()
 checkAndroidV2SignaturePath = libPath + "CheckAndroidV2Signature.jar"
 walleChannelWritterPath = libPath + "walle-cli-all.jar"
 keystorePath = config.keystorePath
