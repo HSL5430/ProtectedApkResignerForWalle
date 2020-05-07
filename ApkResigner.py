@@ -16,6 +16,23 @@ import config
 import platform
 import shutil
 
+def help():
+  print ("\n**** =============================help=================================== ****\n")
+  print ("①：使用config.py中配置的参数 -->  直接双击ApkResigner.py（如果本机安装并关联了Python Launcher可用）")
+  print ("②：使用config.py中配置的参数 -->  终端执行python ApkResigner.py")
+  print ("③：使用自定义参数 -->  终端执行python ApkResigner.py <androidBuildToolsPath> <channelsInputFilePath> <channelsOutputFilePath>")
+  print ("    androidBuildToolsPath：android sdk中build-tools下某个版本的路径，尽量跟Android项目中的buildToolsVersion保持一致，如/Users/xxx/Library/Android/sdk/build-tools/28.0.3")
+  print ("    channelsInputFilePath：渠道配置文件(.txt)和基础包所在的【目录】，默认当前脚本所在的目录")
+  print ("    channelsOutputFilePath：渠道包输出的目录，默认当前脚本所在的目录下的channels文件夹")
+  print ("    注意：这几个Path都结尾都不要带斜杠'/'")
+  print ("\n**** =============================help=================================== ****\n")
+
+if len(sys.argv) > 1:
+  arg1 = sys.argv[1].lower()
+  if ("help" == arg1) | ("h" == arg1):
+    help()
+    exit()
+
 #获取脚本文件的当前路径
 def curFileDir():
   #获取脚本路径
