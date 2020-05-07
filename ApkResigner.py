@@ -29,7 +29,7 @@ def help():
 
 if len(sys.argv) > 1:
   arg1 = sys.argv[1].lower()
-  if ("help" == arg1) | ("h" == arg1):
+  if "help" == arg1 or "h" == arg1:
     help()
     exit()
 
@@ -118,7 +118,7 @@ def generateChannelApks(apkFilePath, channelFilePath):
     return
 
 def getBuildToolsPath():
-  if len(sys.argv) > 1:
+  if len(sys.argv) > 1 and len(sys.argv[1]) > 0:
     return sys.argv[1]
   else:
     return config.sdkBuildToolPath
@@ -129,7 +129,7 @@ parentPath = parentDir + getBackslash()
 os.chdir(parentDir)
 
 def getChannelFilePath():
-  if len(sys.argv) > 2:
+  if len(sys.argv) > 2 and len(sys.argv[2]) > 0:
     path = sys.argv[2] + getBackslash() + "channel.txt"
   elif len(config.channelFilePath) > 0:
     path = config.channelFilePath
@@ -138,7 +138,7 @@ def getChannelFilePath():
   return path
 
 def getChannelsInputFilePath():
-  if len(sys.argv) > 2:
+  if len(sys.argv) > 2 and len(sys.argv[2]) > 0:
     path = sys.argv[2]
   elif len(config.protectedSourceApkDirPath) > 0:
     path = config.protectedSourceApkDirPath
@@ -147,7 +147,7 @@ def getChannelsInputFilePath():
   return path + getBackslash()
 
 def getChannelsOutputFilePath():
-  if len(sys.argv) > 3:
+  if len(sys.argv) > 3 and len(sys.argv[3]) > 0:
     path =  sys.argv[3]
   elif len(config.channelsOutputFilePath) > 0:
     path = config.channelsOutputFilePath
