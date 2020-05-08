@@ -1,13 +1,24 @@
 
 # 我做了一些修改
+> **[ProtectedApkResignerForWalle](https://github.com/hsl5430/ProtectedApkResignerForWalle)**
 
 - 修改前：只支持一个base包，并写死了base apk名称；
 - 修改后：支持多个base包，动态读取根目录下的apk文件，遍历这些base apk，读取对应名称的channel文件，生成多渠道包。
+- 2020-05-08：支持传参：
+  `python ApkResigner.py <androidBuildToolsPath> <channelsInputFilePath> <channelsOutputFilePath>`
+  | 参数                    | 说明                    |
+  | ---------------------- | ---------------------- |
+  | androidBuildToolsPath  | android sdk中build-tools下某个版本的路径，尽量跟Android项目中的buildToolsVersion保持一致，如/Users/xxx/Library/Android/sdk/build-tools/28.0.3 |
+  | channelsInputFilePath  | 渠道配置文件(.txt)和基础包所在的【目录】，默认当前脚本所在的目录 |
+  | channelsOutputFilePath | 渠道包输出的目录，默认当前脚本所在的目录下的channels文件夹 |
+  
+  注意：这几个Path的结尾都不要带斜杠'/'，具体怎么用终端执行`python ApkResigner.py help`
+  
 
 ## 如何使用
 
 1. 前提：Python环境
-2. 下载我修改后的ProtectedApkResignerForWalle
+2. 下载我修改后的**[ProtectedApkResignerForWalle](https://github.com/hsl5430/ProtectedApkResignerForWalle)**
 3. 用文件编辑器打开config.py文件，看注释，配置参数：keystone相关、
 4. 拷贝加固包到ProtectedApkResignerForWalle根目录下
 5. channel文件要跟apk文件一一对应，看下表
